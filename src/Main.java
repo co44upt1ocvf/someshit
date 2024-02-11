@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 public class Main {
     public static void main(String[] args) {
-        double formula, answer; // создаём переменные, в которых будем хранить формулу для расчёта и выводить ответ
+        double formula, final_formula, answer; // создаём переменные, в которых будем хранить формулу для расчёта и выводить ответ
         int symbol = 3; // создаём переменную, которая хранит в себе значение необходимых нам символов после запятой
 
         Scanner coordinate = new Scanner(System.in); // сканнер, с помощью которого будем получать инфу
@@ -18,19 +18,24 @@ public class Main {
         while (true){
             System.out.println("Задайте координаты первой точки..."); // выводим пользователю указания к действию и принимаем в переменные данные полученные от пользователя
             System.out.print("Долгота: ");
-            double longitude_1 = Math.toRadians(coordinate.nextDouble()); // получаем данные от пользователя
+            double longitude_1 = coordinate.nextDouble(); // получаем данные от пользователя
             System.out.print("Широта: ");
-            double width_1 = Math.toRadians(coordinate.nextDouble());
+            double width_1 = coordinate.nextDouble();
             System.out.println("\nЗадайте координаты второй точки...");
             System.out.print("Долгота: ");
-            double longitude_2 = Math.toRadians(coordinate.nextDouble());
+            double longitude_2 = coordinate.nextDouble();
             System.out.print("Широта: ");
-            double width_2 = Math.toRadians(coordinate.nextDouble());
+            double width_2 = coordinate.nextDouble();
 
-            formula = (2 * Math.asin(Math.sqrt(Math.pow(Math.sin((width_2 - width_1) / 2), 2)
-                    + Math.cos(width_1) * Math.cos(width_2) * Math.pow(Math.sin((longitude_2 - longitude_1 / 2)), 2)))) * EARTH_RADIUS; // переменная, которая хранит в себе формулу для расчёта
+            double dlon = Math.toRadians(longitude_2 - longitude_1);
+            double dwid = Math.toRadians(width_2 - width_1);
 
-            BigDecimal after_comma = new BigDecimal(formula); // используем класс BigDecimal для того, чтобы округлить наш результат до определенного кол-ва символов после точки
+            formula = Math.sin(dwid) / 2 * Math.sin(dwid) / 2
+                    + Math.cos(Math.toRadians(width_1)) * Math.cos(Math.toRadians(width_2)) * Math.sin(dlon / 2) * Math.sin(dlon / 2);
+
+            final_formula = (2 * Math.atan2(Math.sqrt(formula), Math.sqrt(1 - formula))) * EARTH_RADIUS; // переменная, которая хранит в себе формулу для расчёта
+
+            BigDecimal after_comma = new BigDecimal(final_formula); // используем класс BigDecimal для того, чтобы округлить наш результат до определенного кол-ва символов после точки
             after_comma = after_comma.setScale(symbol, RoundingMode.HALF_UP); // RoundingMode.HALF_UP - округление в большую сторону, если число после точки >= .5
             answer = after_comma.doubleValue();
 
